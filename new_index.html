@@ -9,6 +9,7 @@
 </head>
 
 <style>
+    /* Global Styles */
     :root {
         --accent-color: #f3d817;
         --shadow: 0 3px 5px 2px rgba(0, 0, 0, .7);
@@ -26,6 +27,7 @@
         background-color: rgb(38, 38, 109);
     }
 
+    /* Header Styles */
     header {
         text-align: center;
     }
@@ -48,6 +50,7 @@
         color: var(--accent-color);
     }
 
+    /* Container Styles */
     main {
         display: flex;
         justify-content: center;
@@ -60,6 +63,7 @@
         max-width: 1200px;
     }
 
+    /* Gameboard Styles */
     .gameboard {
         display: grid;
         grid-template-columns: 1fr;
@@ -74,7 +78,7 @@
         border-radius: 5px;
         box-shadow: var(--shadow);
         padding: 15px;
-        max-height: 270px;
+        max-height: 260px;
     }
 
     .gameboard p {
@@ -102,7 +106,7 @@
     }
 
     button:hover {
-        background-color: #ddd;
+        background-color: #f3e052;
         cursor: pointer;
     }
 
@@ -128,6 +132,7 @@
         margin: 15px;
     }
 
+    /* Scoreboard Styles */
     .scoreboard {
         background-color: whitesmoke;
         padding: 10px;
@@ -137,7 +142,7 @@
         min-width: 260px;
     }
 
-    .scoreboard > p {
+    .scoreboard>p {
         font-size: 4rem;
         font-family: 'Caveat Brush', cursive;
         text-align: center;
@@ -145,6 +150,10 @@
 
     .scoreboard ul {
         list-style-type: none;
+    }
+
+    ul li {
+        margin-bottom: 10px;
     }
 
     .round-title {
@@ -158,7 +167,6 @@
     }
 
     .round-desc span {
-        color: green;
         font-weight: bold;
     }
 
@@ -167,6 +175,7 @@
         font-weight: bold;
     }
 
+    /* Media Queries */
     @media screen and (max-width: 400px) {
         .gameboard {
             padding: 15px 0;
@@ -211,7 +220,7 @@
 <body>
     <header>
         <h1>Rock, Paper, Scissors. Shoot!</h1>
-        <a href="#">How to play</a>
+        <a href="https://www.wikihow.com/Play-Rock,-Paper,-Scissors" target="_blank">How to play</a>
     </header>
     <main>
         <div class="container">
@@ -225,8 +234,8 @@
             </div>
             <span id="divider"></span>
             <div class="scoreboard">
-                <p>Scoreboard:</p>
                 <!-- Dynamic Logic Here -->
+                <!-- <p>Scoreboard: [0:0]</p>
                 <ul>
                     <li>
                         <p class="round-title">Round #1</p>
@@ -253,68 +262,94 @@
                         <p class="round-desc">You chose [playerChoice] and the computer chose [computerChoice].
                             <span>You [Won/Loss]!</span></p>
                     </li>
-                </ul>
+                </ul> -->
             </div>
         </div>
     </main>
     <script>
-        let getRandomNumber = () => Math.floor(Math.random() * 3);
-
-        let getComputerChoice = () => {
-            const choices = ["rock", "paper", "scissors"];
-            return choices[getRandomNumber()];
-        };
-
-        let getScore = (playerScore, computerScore) => {
-            return `Scores: \nPlayer = ${playerScore} \nComputer = ${computerScore}`;
-        }
-
         let round = 1;
         let playerScore = 0;
         let computerScore = 0;
+        let buttons = document.querySelectorAll("button");
+        let scoreboard = document.querySelector(".scoreboard");
+        let score = document.createElement("P");
+        scoreboard.appendChild(score);
 
-        let startGame = () => {
-            let playRound = (playerSelection, computerSelection) => {
-                playerSelection = playerSelection.toLowerCase();
-                computerSelection = computerSelection.toLowerCase();
+        let getRandomNumber = (number) => Math.floor(Math.random() * number);
 
-                if (playerSelection === computerSelection) {
-                    return "A draw!";
-                } else if (
-                    playerSelection === "rock" && computerSelection === "scissors" ||
-                    playerSelection === "scissor" && computerSelection === "paper" ||
-                    playerSelection === "paper" && computerSelection === "rock"
-                ) {
-                    playerScore++;
-                    return `Player wins, ${playerSelection} beats ${computerSelection}!`;
-                } else {
-                    computerScore++;
-                    return `Computer wins, ${computerSelection} beats ${playerSelection}!`;
-                }
-            };
-            // console.log(playRound(prompt("Round " + round +
-            //     " of 5: Make a selection: [rock, paper, or scissors]"), getComputerChoice()));
-            console.log(getScore(playerScore, computerScore));
+        let getComputerChoice = () => {
+            const choices = ["rock", "paper", "scissors"];
+            return choices[getRandomNumber(choices.length)];
         };
 
+        let updateScore = () => {
+            score.textContent = `Scoreboard: [${playerScore}:${computerScore}]`;
+        };
 
-        while (round <= 5) {
-            startGame();
-            round++;
-        }
-
-        let printGameOverStats = () => {
-            console.log("Game Over!");
-            if (playerScore > computerScore) {
-                console.log(`Player wins ${playerScore} games to ${computerScore}!!!`);
-            } else if (computerScore > playerScore) {
-                console.log(`Computer wins ${computerScore} games to ${playerScore}!!!`);
-            } else {
-                console.log(`Looks like a tie, ${playerScore} games to ${computerScore}!!!`);
+        let getResult = result => {
+            switch (result) {
+                case "You Won!":
+                    return "<span style='color: green'>You Won!</span>";
+                case "You Loss!":
+                    return "<span style='color: red'>You Loss!</span>";
+                default:
+                    return "<span>It's a draw!</span>";
             }
         }
 
-        printGameOverStats();
+        let UL = document.createElement("UL");
+        let printStats = (playerChoice, computerChoice, result) => {
+            let LI = document.createElement("LI");
+            let title = document.createElement("P");
+            title.classList.add("round-title");
+            title.textContent = `Round #${round}`;
+            let description = document.createElement("P");
+            description.classList.add("round-desc");
+            description.innerHTML =
+                `You chose ${playerChoice} and the computer chose ${computerChoice}. ${getResult(result)}`;
+
+            LI.appendChild(title);
+            LI.appendChild(description);
+            UL.appendChild(LI);
+            scoreboard.appendChild(UL);
+        };
+
+        let playRound = (playerSelection, computerSelection) => {
+            playerSelection = playerSelection.toLowerCase();
+            computerSelection = computerSelection.toLowerCase();
+
+            let printResult = printStats.bind(window, playerSelection, computerSelection);
+
+            if (playerSelection === computerSelection) {
+                printResult("It's a draw!");
+            } else if (
+                playerSelection === "rock" && computerSelection === "scissors" ||
+                playerSelection === "scissors" && computerSelection === "paper" ||
+                playerSelection === "paper" && computerSelection === "rock"
+            ) {
+                playerScore++;
+                printResult("You Won!");
+            } else {
+                computerScore++;
+                printResult("You Loss!");
+            }
+            updateScore();
+        };
+
+        let startGame = () => {
+            updateScore();
+            let handleButtonClick = (e) => {
+                if (round > 5) return;
+                const playerChoice = e.target.id;
+                const computerChoice = getComputerChoice();
+                playRound(playerChoice, computerChoice);
+                round++;
+            };
+
+            buttons.forEach(button => button.addEventListener("click", handleButtonClick));
+        }
+
+        startGame();
     </script>
 </body>
 
