@@ -314,6 +314,14 @@
             scoreboard.appendChild(UL);
         };
 
+        let checkWinner = () => {
+            if (playerScore === 5) {
+                alert("Congratulations, You win!");
+            } else if (computerScore === 5) {
+                alert("Looks like the computer beat you!");
+            }
+        }
+
         let playRound = (playerSelection, computerSelection) => {
             playerSelection = playerSelection.toLowerCase();
             computerSelection = computerSelection.toLowerCase();
@@ -334,12 +342,13 @@
                 printResult("You Loss!");
             }
             updateScore();
+            setTimeout(checkWinner, 200);
         };
 
         let startGame = () => {
             updateScore();
             let handleButtonClick = (e) => {
-                if (round > 5) return;
+                if (playerScore >= 5 || computerScore >= 5) return;
                 const playerChoice = e.target.id;
                 const computerChoice = getComputerChoice();
                 playRound(playerChoice, computerChoice);
